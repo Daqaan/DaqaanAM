@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إصدار رقم مرجعي</title>
+  <style>
+    body {
+      font-family: "Tahoma", sans-serif;
+      background-color: #f5e8c7; /* خلفية بيج */
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      direction: rtl;
+    }
+
+    h1 {
+      color: #0a4d2c; /* أخضر غامق */
+      margin: 20px 0 10px 0;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      text-align: right;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+      display: block;
+      margin-top: 15px;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 10px;
+      border: 1px solid #aaa;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #0a4d2c;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin: 10px 5px 0 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #146b40;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #0a4d2c;
+    }
+
+    input.result-box {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 14px;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <h1>إصدار رقم مرجعي</h1>
+
+  <div class="container">
+    <label for="branch">الفرع:</label>
+    <select id="branch">
+      <option value="JZ">جيزان</option>
+      <option value="AB">أبها</option>
+      <option value="NJ">نجران</option>
+      <option value="BH">الباحة</option>
+    </select>
+
+    <label for="monitor">رقم المراقب:</label>
+    <select id="monitor"></select>
+
+    <label for="visit">رقم الزيارة:</label>
+    <select id="visit"></select>
+
+    <label for="type">نوع الزيارة:</label>
+    <select id="type">
+      <option value="R">R</option>
+      <option value="L">L</option>
+      <option value="I">I</option>
+    </select>
+
+    <div style="text-align:center;">
+      <button onclick="generateReference()">إصدار رقم مرجعي</button>
+      <button onclick="copyReference()">نسخ الرقم</button>
+      <button onclick="resetForm()">إعادة التعيين</button>
+    </div>
+
+    <div class="result" id="resultLabel">الرقم المرجعي:</div>
+    <input id="result" class="result-box" readonly />
+  </div>
+
+  <footer>
+    Design by Ahmed Daqaani
+  </footer>
+
+  <script>
+    window.onload = function() {
+      const monitorSelect = document.getElementById("monitor");
+      for (let i = 10; i <= 45; i++) {
+        monitorSelect.innerHTML += `<option value="${i}">${i}</option>`;
+      }
+
+      const visitSelect = document.getElementById("visit");
+      for (let i = 1; i <= 10; i++) {
+        let num = i.toString().padStart(2, "0");
+        visitSelect.innerHTML += `<option value="${num}">${num}</option>`;
+      }
+    };
+
+    function generateReference() {
+      const branch = document.getElementById("branch").value;
+      const monitor = document.getElementById("monitor").value;
+      const visit = document.getElementById("visit").value;
+      const type = document.getElementById("type").value;
+
+      const now = new Date();
+      const year = now.getFullYear().toString().slice(-2);
+      const month = (now.getMonth() + 1).toString().padStart(2, "0");
+      const day = now.getDate().toString().padStart(2, "0");
+
+      const reference = `${branch}${monitor}${year}${month}${day}${visit}${type}`;
+      document.getElementById("result").value = reference;
+    }
+
+    function copyReference() {
+      const result = document.getElementById("result");
+      if (result.value.trim() !== "") {
+        result.select();
+        navigator.clipboard.writeText(result.value);
+        alert("تم نسخ الرقم المرجعي ✅");
+      } else {
+        alert("الرجاء توليد رقم أولاً ⚠️");
+      }
+    }
+
+    function resetForm() {
+      document.getElementById("branch").selectedIndex = 0;
+      document.getElementById("monitor").selectedIndex = 0;
+      document.getElementById("visit").selectedIndex = 0;
+      document.getElementById("type").selectedIndex = 0;
+      document.getElementById("result").value = "";
+    }
+  </script>
+</body>
+</html>
