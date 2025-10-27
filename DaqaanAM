@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إصدار رقم مرجعي</title>
+  <style>
+    body {
+      font-family: "Tahoma", sans-serif;
+      background-color: #f5e8c7; /* خلفية بيج */
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      direction: rtl;
+    }
+
+    h1 {
+      color: #0a4d2c; /* أخضر غامق */
+      margin-top: 20px;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      text-align: right;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+      display: block;
+      margin-top: 15px;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 10px;
+      border: 1px solid #aaa;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #0a4d2c;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin: 10px 5px 0 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #146b40;
+    }
+
+    .next-visit {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      font-size: 18px;
+      background-color: #0a4d2c;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #0a4d2c;
+    }
+
+    input.result-box {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .copied-message {
+      color: #0a4d2c;
+      margin-top: 8px;
+      font-weight: bold;
+      display: none;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 14px;
+      color: #777; /* رمادي فاتح */
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>إصدار رقم مرجعي</h1>
+
+  <div class="container">
+    <label for="branch">الفرع:</label>
+    <select id="branch">
+      <option value="" disabled selected>اختر الفرع</option>
+      <option value="JZ">جيزان</option>
+      <option value="AB">أبها</option>
+      <option value="NJ">نجران</option>
+      <option value="BH">الباحة</option>
+    </select>
+
+    <label for="monitor">رقم المراقب:</label>
+    <select id="monitor">
+      <script>
+        for (let i = 10; i <= 45; i++) {
+          document.write(`<option value="${i}">${i}</option>`);
+        }
+      </script>
+    </select>
+
+    <label for="visit">رقم الزيارة:</label>
+    <select id="visit">
+      <script>
+        for (let i = 1; i <= 10; i++) {
+          let num = i.toString().padStart(2, "0");
+          document.write(`<option value="${num}">${num}</option>`);
+        }
+      </script>
+    </select>
+
+    <label for="type">نوع الزيارة:</label>
+    <select id="type">
+      <option value="R">R</option>
+      <option value="L">L</option>
+      <option value="I">I</option>
+    </select>
+
+    <div style="text-align:center;">
+      <button onclick="generateReference()">إصدار رقم مرجعي</button>
+      <button onclick="resetForm()">إعادة التعيين</button>
+    </div>
+
+    <button class="next-visit" onclick="nextVisit()">🔁 الزيارة التالية</button>
+
+    <div class="result">
+      <input id="result" class="result-box" readonly />
+      <div id="copiedMsg" class="copied-message">✅ تم نسخ الرقم المرجعي بنجاح</div>
+    </div>
+  </div>
+
+  <footer>
+    Design by Ahmed Daqaani
+  </footer>
+
+  <script>
+    function pad2(num) {
+      return num.toString().padStart(2, "0");
+    }
+
+    function generateReference() {
+      const branch = document.getElementById("branch").value;
+      const monitor = document.getElementById("monitor").value;
+      const visit = document.getElementById("visit").value;
+      const type = document.getElementById("type").value;
+
+      if (!branch || !monitor || !visit || !type) {
+        alert("الرجاء اختيار جميع الحقول قبل توليد الرقم ⚠️");
+        return;
+      }
+
+      const now = new Date();
+      const year = now.getFullYear().toString().slice(-2);
+      const month = pad2(now.getMonth() + 1);
+      const day = pad2(now.getDate());
+
+      const reference = `${branch}${monitor}${year}${month}${day}${visit}${type}`;
+      document.getElementById("result").value = reference;
+      copyToClipboard(reference);
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const msg = document.getElementById("copiedMsg");
+        msg.style.display = "block";
+        setTimeout(() => { msg.style.display = "none"; }, 2000);
+      });
+    }
+
+    function resetForm() {
+      document.getElementById("visit").selectedIndex = 0;
+      document.getElementById("result").value = "";
+      document.getElementById("copiedMsg").style.display = "none";
+    }
+
+    function nextVisit() {
+      const visitSelect = document.getElementById("visit");
+      let current = parseInt(visitSelect.value);
+      if (isNaN(current)) current = 0;
+      if (current >= 10) {
+        alert("تم الوصول إلى آخر رقم زيارة (10).");
+        return;
+      }
+      let next = pad2(current + 1);
+      visitSelect.value = next;
+      generateReference();
+    }
+  </script>
+
+</body>
+</html>
